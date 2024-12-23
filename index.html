@@ -35,46 +35,7 @@
 
   gtag('config', 'G-16TCNJQFW0');
 </script>  
-<style>
-  
-.instagram:hover .bi-instagram {
-  color: #E1306C; /* Instagram color */
-}
 
-.github:hover .bi-github {
-  color: #333; /* GitHub color */
-}
-
-.discord:hover .bi-discord {
-  color: #7289DA; /* Discord color */
-}
-
-.spotify:hover .bi-spotify {
-  color: #1DB954; /* Spotify color */
-}
-
-.facebook:hover .bi-facebook {
-  color: #4267B2; /* Facebook color */
-}
-
-.linkedin:hover .bi-linkedin {
-  color: #0077B5; /* LinkedIn color */
-}
-
-.twitter:hover .bi-x {
-  color: #1DA1F2; /* Twitter color */
-}
-
-.letterboxd:hover .bi-camera-reels {
-  color: #FF4F00; /* Letterboxd color */
-}
-
-.snapchat:hover .bi-snapchat {
-  color: #FFFC00; /* Snapchat color */
-}
-
-
-</style>
 </head>
 
 <body>
@@ -93,6 +54,7 @@
           <li><a class="nav-link active" href="#header">Home</a></li>
           <li><a class="nav-link" href="#about">About</a></li>
           <li><a class="nav-link" href="#portfolio">Gallery</a></li>
+          <li><a class="nav-link" href="#services">Projects</a></li>
           <li><a class="nav-link" href="#contact">Contact</a></li>
         </ul>
       </nav><!-- .navbar -->
@@ -101,12 +63,9 @@
         <a href="https://instagram.com/saraan.___" target="_blank" class="instagram"><i class="bi bi-instagram icon-red"></i></a>
         <a href="https://github.com/saranskumar"target="_blank" class="github"><i class="bi bi-github"></i></a>
         <a href="https://discord.com/users/saranskumar" target="_blank" class="discord"><i class="bi bi-discord"></i></a>
-        <a href="https://open.spotify.com/user/3buchh9lx5jrppr72htw8p2ck?si="target="_blank" class="spotify"><i class="bi bi-spotify"></i></a>
         <a href="https://www.facebook.com/100078377184892" target="_blank"class="facebook"><i class="bi bi-facebook"></i></a>
-        <a href="https://www.linkedin.com/mwlite/in/saran-s-kumar"target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
-        <a href="https://www.twitter.com/SaranSKumar13"target="_blank" class="twitter"><i class="bi bi-x"></i></a>
-        <a href="https://boxd.it/9J1DZ"target="_blank" class="letterboxd"><i class="bi bi-camera-reels"></i></a>
-        <a href="https://snapchat.com/add/technophiler" target="_blank"class="snapchat"><i class="bi bi-snapchat"></i></a>
+        <a href="https://www.linkedin.com/mwlite/in/saran-s-kumar"target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a> 
+        
       </div>
 
     </div>
@@ -171,6 +130,13 @@
           <h3><a href="https://snapchat.com/add/technophiler"target="_blank">Snapchat</a></h3>
         </div>
       </div>
+      <div class="col-lg-3 col-md-4 mt-4 mt-md-0">
+        <div class="icon-box">
+          <i class="bi bi-spotify" style="color: #2ecb02eb;"></i>
+          <h3><a href="https://open.spotify.com/user/3buchh9lx5jrppr72htw8p2ck?si="target="_blank">Spotify</a></h3>
+        </div>
+      </div>
+      
       
       
 
@@ -183,10 +149,38 @@
 
   </section><!-- End About Section -->
   
-  
+  <section id="ai" class="ai"> 
+    <div id="chat-container"></div>
+    <div class="inputs">
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button id="send-button">➤</button>
+    </div>
+  </section>
 
 
  
+      <!-- ======= Services Section ======= -->
+  <section id="services" class="services">
+    <div class="container">
+
+      <div class="section-title">
+        <h2>Projects</h2>
+        <p>My Projects</p>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-4 col-md-6  align-items-stretch">
+          <div class="icon-box"><a href="#ai"target="_blank" >
+            <div class="icon"><i class="bi bi-robot"></i></div>
+            <h4>Chat bot </h4>
+            <p>Ai integrated chat bot using gemini.</p></a>
+          </div>
+        </div>
+
+         
+
+    </div>
+  </section><!-- End Services Section -->
 
   
 
@@ -637,6 +631,109 @@
         })
     })
 </script>
+<script type="module">
+  import { GoogleGenerativeAI } from 'https://esm.run/@google/generative-ai';
+
+  // Replace with your actual API key
+  const API_KEY = 'AIzaSyDv4LGPjUJ_RXCGiExWQxwKtqiLvJPXWtY';
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+  const chatContainer = document.getElementById('chat-container');
+  const messageInput = document.getElementById('message-input');
+  const sendButton = document.getElementById('send-button');
+  const clearButton = document.getElementById('clear-button');  // Button to clear the chat
+
+  // Start a new chat session
+  let chatSession = model.startChat();
+
+  // Function to add a message to the chat container
+  function addMessage(message, sender) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageElement.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
+    chatContainer.appendChild(messageElement);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  // Function to add a loading message to the chat container
+  function addLoadingMessage() {
+    const loadingMessage = document.createElement('div');
+    loadingMessage.textContent = 'AI is typing...';
+    loadingMessage.classList.add('loading-message');
+    chatContainer.appendChild(loadingMessage);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    return loadingMessage;
+  }
+
+  // Function to save the chat to localStorage
+  function saveChatToLocalStorage() {
+    const messages = Array.from(chatContainer.children).map(child => ({
+      text: child.textContent,
+      sender: child.classList.contains('user-message') ? 'user' : 'ai'
+    }));
+    localStorage.setItem('chatHistory', JSON.stringify(messages));
+  }
+
+  // Function to load the chat from localStorage
+  function loadChatFromLocalStorage() {
+    const savedMessages = JSON.parse(localStorage.getItem('chatHistory'));
+    if (savedMessages) {
+      savedMessages.forEach(msg => addMessage(msg.text, msg.sender));
+    }
+  }
+
+  // Function to send a message
+  async function sendMessage() {
+    const userMessage = messageInput.value.trim();
+    if (!userMessage) return;
+
+    // Add user message to chat
+    addMessage(userMessage, 'user');
+    messageInput.value = '';
+
+    // Add loading message for AI response
+    const loadingMessage = addLoadingMessage();
+
+    try {
+      // Send message to Gemini and get response
+      const result = await chatSession.sendMessage(userMessage);
+      const aiMessage = result.response.text();
+
+      // Remove the loading message
+      loadingMessage.remove();
+
+      // Add AI's response to chat
+      addMessage(aiMessage, 'ai');
+
+      // Save the updated chat to localStorage
+      saveChatToLocalStorage();
+    } catch (error) {
+      console.error('Error:', error);
+      // Remove loading message in case of error
+      loadingMessage.remove();
+      addMessage('Sorry, there was an error processing your message.', 'ai');
+    }
+  }
+
+  // Function to clear chat and localStorage
+  function clearChat() {
+    localStorage.removeItem('chatHistory');  // Clear chat from localStorage
+    chatContainer.innerHTML = '';  // Clear chat from the UI
+  }
+
+  // Event listeners
+  sendButton.addEventListener('click', sendMessage);
+  messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  clearButton.addEventListener('click', clearChat);
+
+  // Load saved chat history on page load
+  window.addEventListener('load', loadChatFromLocalStorage);
+</script>
+
 
 </body>
 
